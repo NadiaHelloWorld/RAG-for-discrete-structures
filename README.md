@@ -2,8 +2,8 @@
 
 Trợ lý học tập hỏi đáp theo tài liệu cho môn **Cấu trúc rời rạc**.
 
-Project bắt đầu với tài liệu Buổi 3: *Bài tập Chương 3*, gồm quan hệ hai ngôi,
-quan hệ tương đương và quan hệ thứ tự.
+Project hiện có tài liệu Buổi 1 về *Cơ sở logic* và Buổi 3 về *Quan hệ*, gồm
+mệnh đề, phép toán logic, quan hệ hai ngôi, quan hệ tương đương và quan hệ thứ tự.
 
 ## Kiến trúc
 
@@ -28,6 +28,8 @@ Docling: đọc cấu trúc, tiêu đề, bảng, công thức và hình ảnh
 ```text
 data/source/cau_truc_roi_rac/buoi_3/bai_tap_chuong_3.docx
 data/source/cau_truc_roi_rac/buoi_3/Chuong_3_Quan_he.pptx
+data/source/cau_truc_roi_rac/buoi_1/Chuong_1_Co_so_logic_slides_bai_tap.pptx
+data/source/cau_truc_roi_rac/buoi_1/Chuong_1_Co_so_logic_slides_bai_tap.pdf
 ```
 
 ## Cài đặt
@@ -86,6 +88,8 @@ PYTHONPATH=src python -m edu_rag.cli ask-multimodal \
 
 Visual embedding giúp tìm đúng slide/trang dựa trên nội dung hình ảnh và câu hỏi.
 Qwen3-VL-2B-Instruct dùng ở bước sau để đọc ảnh và viết câu trả lời.
+Nếu PDF và PPTX có cùng tên trong một buổi học, index sẽ chọn một bản để tránh
+lưu trùng nội dung; cả hai file gốc vẫn được giữ trong repo.
 
 Nếu muốn dùng chung ChromaDB với notebook trong thư mục `rag_test`, đặt biến
 môi trường trước khi chạy:
@@ -134,7 +138,7 @@ GitHub. Chúng sẽ được tạo lại bằng lệnh `ingest` trên máy mới
 ## Trạng thái
 
 - [x] Tách project riêng cho môn Cấu trúc rời rạc.
-- [x] Thêm tài liệu Buổi 3.
+- [x] Thêm tài liệu Buổi 1 và Buổi 3.
 - [x] Chọn Docling, Qwen3 Embedding và ChromaDB làm kiến trúc mục tiêu.
 - [x] Cài môi trường Python 3.10/3.11 và chạy ingest thật.
 - [ ] Bổ sung video/slide các buổi tiếp theo.

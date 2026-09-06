@@ -20,11 +20,21 @@ class VisualPage:
 
 
 def discover_visual_documents(source_root: Path) -> list[Path]:
-    return sorted(
+    candidates = sorted(
         path
         for path in source_root.rglob("*")
         if path.is_file() and path.suffix.lower() in VISUAL_EXTENSIONS
     )
+    # A PDF exported from a PPTX often has exactly the same pages. Prefer the
+    # fixed PDF rendering when both share a basename, avoiding duplicate slides.
+    selected: dict[tuple[Path, str], Path] = {}
+    priority = {".pdf": 0, ".pptx": 1}
+    for path in candidates:
+        key = (path.parent, path.stem.casefold())
+        current = selected.get(key)
+        if current is None or priority[path.suffix.lower()] < priority[current.suffix.lower()]:
+            selected[key] = path
+    return sorted(selected.values())
 
 
 def _find_binary(name: str, env_name: str, candidates: tuple[Path, ...]) -> str:

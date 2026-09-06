@@ -18,11 +18,21 @@ class Chunk:
 
 
 def discover_documents(source_root: Path) -> list[Path]:
-    return sorted(
+    candidates = sorted(
         path
         for path in source_root.rglob("*")
         if path.is_file() and path.suffix.lower() in SUPPORTED_EXTENSIONS
     )
+    # When the same lesson is supplied as both PDF and PPTX, keep one text
+    # representation so the vector index does not contain duplicate chunks.
+    selected: dict[tuple[Path, str], Path] = {}
+    priority = {".docx": 0, ".pdf": 1, ".pptx": 2}
+    for path in candidates:
+        key = (path.parent, path.stem.casefold())
+        current = selected.get(key)
+        if current is None or priority[path.suffix.lower()] < priority[current.suffix.lower()]:
+            selected[key] = path
+    return sorted(selected.values())
 
 
 def _convert_to_markdown(path: Path) -> str:
@@ -85,4 +95,3 @@ def load_chunks(source_root: Path) -> list[Chunk]:
             ).hexdigest()[:16]
             chunks.append(Chunk(chunk_id=f"{COURSE_ID}-{digest}", text=text, metadata=metadata))
     return chunks
-

@@ -1,0 +1,85 @@
+{
+  "lesson": {
+    "general": {
+      "identifier": "cau_truc_roi_rac-buoi-1",
+      "title": "Buổi 1 - Cơ sở logic",
+      "language": "vi",
+      "description": "Bài giảng và bài tập Chương 1 về cơ sở logic.",
+      "keywords": [
+        "cơ sở logic",
+        "mệnh đề",
+        "phép toán logic",
+        "bảng chân trị",
+        "suy luận"
+      ],
+      "structure": "collection",
+      "aggregation_level": 2
+    },
+    "educational": {
+      "learning_resource_type": "lesson",
+      "intended_end_user_role": "learner",
+      "context": "higher education",
+      "language": "vi"
+    },
+    "relation": {
+      "kind": "ispartof",
+      "target_identifier": "cau_truc_roi_rac"
+    }
+  },
+  "resources": [
+    {
+      "general": {
+        "identifier": "cau_truc_roi_rac-buoi-1-chuong-1-logic-pptx",
+        "title": "Chương 1 - Cơ sở logic (slides và bài tập)",
+        "language": "vi",
+        "description": "Bộ slide PowerPoint Chương 1 về cơ sở logic.",
+        "structure": "linear",
+        "aggregation_level": 1
+      },
+      "technical": {
+        "file_name": "Chuong_1_Co_so_logic_slides_bai_tap.pptx",
+        "format": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "location": "Chuong_1_Co_so_logic_slides_bai_tap.pptx"
+      },
+      "educational": {
+        "interactivity_type": "expositive",
+        "learning_resource_type": "lecture",
+        "interactivity_level": "low",
+        "intended_end_user_role": "learner",
+        "context": "higher education",
+        "language": "vi"
+      },
+      "relation": {
+        "kind": "ispartof",
+        "target_identifier": "cau_truc_roi_rac-buoi-1"
+      }
+    },
+    {
+      "general": {
+        "identifier": "cau_truc_roi_rac-buoi-1-chuong-1-logic-pdf",
+        "title": "Chương 1 - Cơ sở logic (slides và bài tập)",
+        "language": "vi",
+        "description": "Bản PDF của bộ slide và bài tập Chương 1 về cơ sở logic.",
+        "structure": "linear",
+        "aggregation_level": 1
+      },
+      "technical": {
+        "file_name": "Chuong_1_Co_so_logic_slides_bai_tap.pdf",
+        "format": "application/pdf",
+        "location": "Chuong_1_Co_so_logic_slides_bai_tap.pdf"
+      },
+      "educational": {
+        "interactivity_type": "expositive",
+        "learning_resource_type": "lecture",
+        "interactivity_level": "low",
+        "intended_end_user_role": "learner",
+        "context": "higher education",
+        "language": "vi"
+      },
+      "relation": {
+        "kind": "ispartof",
+        "target_identifier": "cau_truc_roi_rac-buoi-1"
+      }
+    }
+  ]
+}
