@@ -18,3 +18,6 @@ EMBEDDING_MODEL = os.getenv("EDU_RAG_EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-0.6
 VISUAL_EMBEDDING_MODEL = os.getenv(
     "EDU_RAG_VISUAL_EMBEDDING_MODEL", "Qwen/Qwen3-VL-Embedding-2B"
 )
+VISUAL_GENERATION_MODEL = os.getenv(
+    "EDU_RAG_VISUAL_GENERATION_MODEL", "Qwen/Qwen3-VL-2B-Instruct"
+)

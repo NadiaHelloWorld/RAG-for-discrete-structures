@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import argparse
+import gc
 import hashlib
 from pathlib import Path
 
 from .documents import Chunk, load_chunks
 from .embedding import QwenEmbedder
 from .generation import LocalQwenAnswerer
+from .vision_generation import LocalQwenVLAnswerer
 from .settings import (
     CHROMA_PATH,
     COLLECTION_NAME,
@@ -16,6 +18,7 @@ from .settings import (
     PROJECT_ROOT,
     VISUAL_COLLECTION_NAME,
     VISUAL_EMBEDDING_MODEL,
+    VISUAL_GENERATION_MODEL,
 )
 from .store import open_collection, search_collection, upsert_chunks
 from .visual import QwenVLEmbedder, discover_visual_documents, render_pages
@@ -42,6 +45,17 @@ def _build_visual_embedder(model_name: str, device: str) -> QwenVLEmbedder:
     print(f"Đang tải visual embedding model: {model_name}")
     print(f"Device visual embedding: {selected_device}")
     return QwenVLEmbedder(model_name, device=selected_device)
+
+
+def _release_model_memory() -> None:
+    gc.collect()
+    try:
+        import torch
+
+        if torch.backends.mps.is_available():
+            torch.mps.empty_cache()
+    except (ImportError, AttributeError):
+        pass
 
 
 def _ingest(source_root: Path, collection_name: str) -> None:
@@ -162,6 +176,54 @@ def _visual_search(
         print(f"Ảnh đã render: {metadata.get('asset_path', 'unknown')}\n")
 
 
+def _multimodal_answer(
+    question: str,
+    top_k: int,
+    text_collection_name: str,
+    visual_collection_name: str,
+    visual_model_name: str,
+    generation_model: str,
+    device: str,
+    max_new_tokens: int,
+) -> None:
+    text_results = _retrieve(question, top_k, text_collection_name)
+
+    visual_embedder = _build_visual_embedder(visual_model_name, device)
+    visual_collection = open_collection(CHROMA_PATH, visual_collection_name)
+    if visual_collection.count() == 0:
+        raise SystemExit("Visual ChromaDB đang trống. Hãy chạy lệnh ingest-visual trước.")
+    visual_results = search_collection(
+        visual_collection,
+        visual_embedder.encode_query(question),
+        top_k,
+    )
+    del visual_embedder
+    _release_model_memory()
+
+    answerer = LocalQwenVLAnswerer(
+        model_name=generation_model,
+        device=None if device == "auto" else device,
+        max_new_tokens=max_new_tokens,
+    )
+    answer = answerer.answer(question, visual_results, text_results)
+    print(f"\nTrợ lý đa phương thức: {answer}\n")
+    print("Nguồn hình ảnh:")
+    for index, result in enumerate(visual_results, start=1):
+        metadata = result["metadata"]
+        print(
+            f"[V{index}] {metadata.get('file_name', 'unknown')} | "
+            f"trang/slide {metadata.get('page_number', '?')}"
+        )
+    print("Nguồn văn bản:")
+    for index, result in enumerate(text_results, start=1):
+        metadata = result["metadata"]
+        print(
+            f"[T{index}] {metadata.get('file_name', 'unknown')} | "
+            f"{metadata.get('lesson_id', 'unknown')} | "
+            f"chunk {metadata.get('chunk_index', '?')}"
+        )
+
+
 def _print_results(question: str, results: list[dict]) -> None:
     print(f"\nCâu hỏi: {question}")
     print(f"Tìm thấy {len(results)} bằng chứng:\n")
@@ -280,6 +342,21 @@ def main() -> None:
         "--device", choices=["auto", "cpu", "mps"], default="auto"
     )
 
+    multimodal_parser = subparsers.add_parser(
+        "ask-multimodal",
+        help="Trả lời bằng text context và ảnh slide/trang với Qwen-VL",
+    )
+    multimodal_parser.add_argument("question")
+    multimodal_parser.add_argument("--top-k", type=int, default=5)
+    multimodal_parser.add_argument("--collection", default=COLLECTION_NAME)
+    multimodal_parser.add_argument("--visual-collection", default=VISUAL_COLLECTION_NAME)
+    multimodal_parser.add_argument("--visual-model", default=VISUAL_EMBEDDING_MODEL)
+    multimodal_parser.add_argument("--generation-model", default=VISUAL_GENERATION_MODEL)
+    multimodal_parser.add_argument(
+        "--device", choices=["auto", "cpu", "mps"], default="auto"
+    )
+    multimodal_parser.add_argument("--max-new-tokens", type=int, default=384)
+
     search_parser = subparsers.add_parser("search", help="Chỉ truy xuất bằng chứng")
     search_parser.add_argument("question")
     search_parser.add_argument("--top-k", type=int, default=5)
@@ -318,6 +395,17 @@ def main() -> None:
             args.collection,
             args.model,
             args.device,
+        )
+    elif args.command == "ask-multimodal":
+        _multimodal_answer(
+            args.question,
+            args.top_k,
+            args.collection,
+            args.visual_collection,
+            args.visual_model,
+            args.generation_model,
+            args.device,
+            args.max_new_tokens,
         )
     elif args.command == "search":
         _print_results(args.question, _retrieve(args.question, args.top_k, args.collection))

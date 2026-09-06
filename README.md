@@ -27,6 +27,7 @@ Docling: đọc cấu trúc, tiêu đề, bảng, công thức và hình ảnh
 
 ```text
 data/source/cau_truc_roi_rac/buoi_3/bai_tap_chuong_3.docx
+data/source/cau_truc_roi_rac/buoi_3/Chuong_3_Quan_he.pptx
 ```
 
 ## Cài đặt
@@ -66,9 +67,25 @@ PYTHONPATH=src python -m edu_rag.cli visual-search \
   "Slide nào giải thích quan hệ tương đương?"
 ```
 
+Hỏi trực tiếp về nội dung nhìn thấy trong slide/trang. Lệnh này truy xuất cả
+collection chữ và collection hình ảnh, sau đó đưa ảnh liên quan cho
+Qwen3-VL-2B-Instruct đọc và trả lời:
+
+```bash
+PYTHONPATH=src python -m edu_rag.cli ask-multimodal \
+  "Hãy giải thích hình minh họa về quan hệ tương đương trong slide."
+```
+
+Nếu máy thiếu bộ nhớ, chạy bản an toàn hơn trên CPU:
+
+```bash
+PYTHONPATH=src python -m edu_rag.cli ask-multimodal \
+  --device cpu --top-k 3 \
+  "Hãy giải thích hình minh họa về quan hệ tương đương trong slide."
+```
+
 Visual embedding giúp tìm đúng slide/trang dựa trên nội dung hình ảnh và câu hỏi.
-Để Qwen trả lời trực tiếp chi tiết nhìn thấy trong ảnh, phase tiếp theo cần nối
-thêm Qwen-VL dạng Instruct; Qwen3-VL-Embedding chỉ tạo vector truy xuất.
+Qwen3-VL-2B-Instruct dùng ở bước sau để đọc ảnh và viết câu trả lời.
 
 Nếu muốn dùng chung ChromaDB với notebook trong thư mục `rag_test`, đặt biến
 môi trường trước khi chạy:
@@ -123,5 +140,5 @@ GitHub. Chúng sẽ được tạo lại bằng lệnh `ingest` trên máy mới
 - [ ] Bổ sung video/slide các buổi tiếp theo.
 - [x] Thêm lớp sinh câu trả lời Qwen local và giao diện `ask`/`chat`.
 - [x] Thêm pipeline render PDF/PPTX và visual retrieval bằng Qwen3-VL-Embedding-2B.
+- [x] Nối Qwen3-VL-2B-Instruct để trả lời dựa trên ảnh slide/trang.
 - [ ] Đánh giá chất lượng câu trả lời trên bộ câu hỏi có đáp án.
-- [ ] Nối Qwen-VL Instruct để trả lời trực tiếp nội dung trong ảnh/slide.
