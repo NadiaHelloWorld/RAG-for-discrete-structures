@@ -11,4 +11,10 @@ CHROMA_PATH = Path(os.getenv("EDU_RAG_CHROMA_PATH", str(DEFAULT_CHROMA_PATH)))
 
 COURSE_ID = "cau_truc_roi_rac"
 COLLECTION_NAME = os.getenv("EDU_RAG_COLLECTION", "cau_truc_roi_rac_qwen3")
+VISUAL_COLLECTION_NAME = os.getenv(
+    "EDU_RAG_VISUAL_COLLECTION", "cau_truc_roi_rac_visual_qwen3vl"
+)
 EMBEDDING_MODEL = os.getenv("EDU_RAG_EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-0.6B")
+VISUAL_EMBEDDING_MODEL = os.getenv(
+    "EDU_RAG_VISUAL_EMBEDDING_MODEL", "Qwen/Qwen3-VL-Embedding-2B"
+)

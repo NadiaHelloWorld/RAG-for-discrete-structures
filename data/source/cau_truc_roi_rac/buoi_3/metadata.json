@@ -61,6 +61,33 @@
         "kind": "ispartof",
         "target_identifier": "cau_truc_roi_rac-buoi-3"
       }
+    },
+    {
+      "general": {
+        "identifier": "cau_truc_roi_rac-buoi-3-chuong-3-quan-he",
+        "title": "Chương 3 - Quan hệ",
+        "language": "vi",
+        "description": "Bộ slide bài giảng Chương 3 về quan hệ trong cấu trúc rời rạc.",
+        "structure": "linear",
+        "aggregation_level": 1
+      },
+      "technical": {
+        "file_name": "Chuong_3_Quan_he.pptx",
+        "format": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "location": "Chuong_3_Quan_he.pptx"
+      },
+      "educational": {
+        "interactivity_type": "expositive",
+        "learning_resource_type": "lecture",
+        "interactivity_level": "low",
+        "intended_end_user_role": "learner",
+        "context": "higher education",
+        "language": "vi"
+      },
+      "relation": {
+        "kind": "ispartof",
+        "target_identifier": "cau_truc_roi_rac-buoi-3"
+      }
     }
   ]
 }

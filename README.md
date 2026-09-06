@@ -8,17 +8,19 @@ quan hệ tương đương và quan hệ thứ tự.
 ## Kiến trúc
 
 ```text
-DOCX/PDF
+DOCX/PDF/PPTX
    ↓
 Docling: đọc cấu trúc, tiêu đề, bảng, công thức và hình ảnh
    ↓
-Chunk có thông tin nguồn
-   ↓
-Qwen/Qwen3-Embedding-0.6B: tạo vector văn bản
-   ↓
-ChromaDB: lưu vector trên máy
-   ↓
-Người học nhập câu hỏi → truy xuất bằng chứng → trả lời có nguồn
+ ┌────────────────────────────────┬─────────────────────────────────┐
+ │ Nội dung chữ                  │ Trang/slide dạng hình ảnh        │
+ │ Qwen3-Embedding-0.6B          │ Qwen3-VL-Embedding-2B            │
+ │ Chroma collection text        │ Chroma collection visual         │
+ └────────────────────────────────┴─────────────────────────────────┘
+                         ↓
+        Câu hỏi tự nhiên → truy xuất text + visual
+                         ↓
+                 Qwen local trả lời có nguồn
 ```
 
 ## Tài nguyên hiện có
@@ -43,6 +45,30 @@ python -m pip install -r requirements.txt
 ```bash
 PYTHONPATH=src python -m edu_rag.cli ingest
 ```
+
+Tạo visual index cho PDF/PPTX. Lệnh này tự chuyển từng trang/slide thành PNG,
+sau đó dùng Qwen3-VL-Embedding-2B để lưu vector hình ảnh vào collection riêng:
+
+```bash
+PYTHONPATH=src python -m edu_rag.cli ingest-visual
+```
+
+Trên Mac có MPS, mặc định lệnh dùng MPS; có thể ép chạy CPU nếu thiếu bộ nhớ:
+
+```bash
+PYTHONPATH=src python -m edu_rag.cli ingest-visual --device cpu --batch-size 1
+```
+
+Kiểm tra truy xuất slide bằng câu hỏi tự nhiên:
+
+```bash
+PYTHONPATH=src python -m edu_rag.cli visual-search \
+  "Slide nào giải thích quan hệ tương đương?"
+```
+
+Visual embedding giúp tìm đúng slide/trang dựa trên nội dung hình ảnh và câu hỏi.
+Để Qwen trả lời trực tiếp chi tiết nhìn thấy trong ảnh, phase tiếp theo cần nối
+thêm Qwen-VL dạng Instruct; Qwen3-VL-Embedding chỉ tạo vector truy xuất.
 
 Nếu muốn dùng chung ChromaDB với notebook trong thư mục `rag_test`, đặt biến
 môi trường trước khi chạy:
@@ -96,4 +122,6 @@ GitHub. Chúng sẽ được tạo lại bằng lệnh `ingest` trên máy mới
 - [x] Cài môi trường Python 3.10/3.11 và chạy ingest thật.
 - [ ] Bổ sung video/slide các buổi tiếp theo.
 - [x] Thêm lớp sinh câu trả lời Qwen local và giao diện `ask`/`chat`.
+- [x] Thêm pipeline render PDF/PPTX và visual retrieval bằng Qwen3-VL-Embedding-2B.
 - [ ] Đánh giá chất lượng câu trả lời trên bộ câu hỏi có đáp án.
+- [ ] Nối Qwen-VL Instruct để trả lời trực tiếp nội dung trong ảnh/slide.
