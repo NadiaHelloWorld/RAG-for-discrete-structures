@@ -44,6 +44,14 @@ python -m pip install -r requirements.txt
 PYTHONPATH=src python -m edu_rag.cli ingest
 ```
 
+Nếu muốn dùng chung ChromaDB với notebook trong thư mục `rag_test`, đặt biến
+môi trường trước khi chạy:
+
+```bash
+export EDU_RAG_CHROMA_PATH="/Users/VoThiXuanHoa/Downloads/rag_test/chroma_db"
+PYTHONPATH=src python -m edu_rag.cli ingest
+```
+
 Hỏi trực tiếp một câu:
 
 ```bash
