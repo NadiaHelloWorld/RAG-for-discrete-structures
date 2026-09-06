@@ -1,0 +1,34 @@
+{
+  "schema": {
+    "name": "IEEE LOM reduced application profile",
+    "based_on": "IEEE Std 1484.12.1-2020",
+    "profile_version": "0.1"
+  },
+  "general": {
+    "identifier": "cau_truc_roi_rac",
+    "title": "Cấu trúc rời rạc",
+    "language": "vi",
+    "description": "Tài nguyên học tập phục vụ môn Cấu trúc rời rạc.",
+    "keywords": [
+      "cấu trúc rời rạc",
+      "quan hệ hai ngôi",
+      "quan hệ tương đương",
+      "quan hệ thứ tự"
+    ],
+    "structure": "hierarchical",
+    "aggregation_level": 3
+  },
+  "educational": {
+    "learning_resource_type": "course",
+    "intended_end_user_role": "learner",
+    "context": "higher education",
+    "language": "vi"
+  },
+  "classification": {
+    "purpose": "discipline",
+    "taxon_path": [
+      "Công nghệ thông tin",
+      "Cấu trúc rời rạc"
+    ]
+  }
+}

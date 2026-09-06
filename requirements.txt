@@ -1,0 +1,6 @@
+chromadb>=1.0.0
+docling>=2.70.0
+sentence-transformers>=3.0.0
+torch>=2.1.0
+transformers>=4.40.0
+tqdm>=4.66.0

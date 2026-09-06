@@ -1,0 +1,66 @@
+{
+  "lesson": {
+    "general": {
+      "identifier": "cau_truc_roi_rac-buoi-3",
+      "title": "Buổi 3 - Bài tập Chương 3",
+      "language": "vi",
+      "description": "Bộ bài tập về quan hệ hai ngôi, quan hệ tương đương và quan hệ thứ tự.",
+      "keywords": [
+        "quan hệ hai ngôi",
+        "ma trận quan hệ",
+        "đồ thị có hướng",
+        "quan hệ tương đương",
+        "lớp tương đương",
+        "quan hệ thứ tự",
+        "biểu đồ Hasse"
+      ],
+      "structure": "collection",
+      "aggregation_level": 2
+    },
+    "educational": {
+      "learning_resource_type": "lesson",
+      "intended_end_user_role": "learner",
+      "context": "higher education",
+      "language": "vi",
+      "learning_objectives": [
+        "Xác định các tính chất của quan hệ hai ngôi.",
+        "Biểu diễn quan hệ bằng ma trận và đồ thị có hướng.",
+        "Nhận biết và phân tích quan hệ tương đương, lớp tương đương.",
+        "Phân tích quan hệ thứ tự và biểu diễn bằng biểu đồ Hasse."
+      ]
+    },
+    "relation": {
+      "kind": "ispartof",
+      "target_identifier": "cau_truc_roi_rac"
+    }
+  },
+  "resources": [
+    {
+      "general": {
+        "identifier": "cau_truc_roi_rac-buoi-3-bai-tap-chuong-3",
+        "title": "Bài tập Chương 3",
+        "language": "vi",
+        "description": "Tài liệu DOCX gồm 54 bài tập về các loại quan hệ trong toán rời rạc.",
+        "structure": "linear",
+        "aggregation_level": 1
+      },
+      "technical": {
+        "file_name": "bai_tap_chuong_3.docx",
+        "format": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "location": "bai_tap_chuong_3.docx"
+      },
+      "educational": {
+        "interactivity_type": "active",
+        "learning_resource_type": "exercise",
+        "interactivity_level": "high",
+        "intended_end_user_role": "learner",
+        "context": "higher education",
+        "language": "vi"
+      },
+      "relation": {
+        "kind": "ispartof",
+        "target_identifier": "cau_truc_roi_rac-buoi-3"
+      }
+    }
+  ]
+}
