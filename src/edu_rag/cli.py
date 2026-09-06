@@ -5,6 +5,7 @@ from pathlib import Path
 
 from .documents import load_chunks
 from .embedding import QwenEmbedder
+from .generation import LocalQwenAnswerer
 from .settings import CHROMA_PATH, COLLECTION_NAME, COURSE_SOURCE_ROOT, EMBEDDING_MODEL
 from .store import open_collection, search_collection, upsert_chunks
 
@@ -53,12 +54,48 @@ def _print_results(question: str, results: list[dict]) -> None:
         print()
 
 
-def _chat(top_k: int, collection_name: str) -> None:
+def _answer(
+    question: str,
+    top_k: int,
+    collection_name: str,
+    generation_model: str,
+    max_new_tokens: int,
+) -> None:
+    results = _retrieve(question, top_k, collection_name)
+    if not results:
+        print("Không tìm thấy bằng chứng phù hợp trong tài liệu môn học.")
+        return
+
+    answerer = LocalQwenAnswerer(
+        model_name=generation_model,
+        max_new_tokens=max_new_tokens,
+    )
+    print(f"\nTrợ lý: {answerer.answer(question, results)}\n")
+    print("Nguồn:")
+    for index, result in enumerate(results, start=1):
+        metadata = result["metadata"]
+        print(
+            f"[{index}] {metadata.get('file_name', 'unknown')} | "
+            f"{metadata.get('lesson_id', 'unknown')} | "
+            f"chunk {metadata.get('chunk_index', '?')}"
+        )
+
+
+def _chat(
+    top_k: int,
+    collection_name: str,
+    generation_model: str,
+    max_new_tokens: int,
+) -> None:
     embedder = _build_embedder()
     collection = open_collection(CHROMA_PATH, collection_name)
     if collection.count() == 0:
         raise SystemExit("ChromaDB đang trống. Hãy chạy lệnh ingest trước.")
 
+    answerer = LocalQwenAnswerer(
+        model_name=generation_model,
+        max_new_tokens=max_new_tokens,
+    )
     print("Đã sẵn sàng. Nhập câu hỏi; gõ 'exit' hoặc 'thoát' để kết thúc.")
     while True:
         try:
@@ -72,7 +109,18 @@ def _chat(top_k: int, collection_name: str) -> None:
         if not question:
             continue
         results = search_collection(collection, embedder.encode_query(question), top_k)
-        _print_results(question, results)
+        if not results:
+            print("Trợ lý: Không tìm thấy bằng chứng phù hợp trong tài liệu môn học.")
+            continue
+        print(f"\nTrợ lý: {answerer.answer(question, results)}\n")
+        print("Nguồn:")
+        for index, result in enumerate(results, start=1):
+            metadata = result["metadata"]
+            print(
+                f"[{index}] {metadata.get('file_name', 'unknown')} | "
+                f"{metadata.get('lesson_id', 'unknown')} | "
+                f"chunk {metadata.get('chunk_index', '?')}"
+            )
 
 
 def main() -> None:
@@ -83,22 +131,44 @@ def main() -> None:
     ingest_parser.add_argument("--source-root", type=Path, default=COURSE_SOURCE_ROOT)
     ingest_parser.add_argument("--collection", default=COLLECTION_NAME)
 
-    ask_parser = subparsers.add_parser("ask", help="Truy xuất bằng chứng cho một câu hỏi")
+    search_parser = subparsers.add_parser("search", help="Chỉ truy xuất bằng chứng")
+    search_parser.add_argument("question")
+    search_parser.add_argument("--top-k", type=int, default=5)
+    search_parser.add_argument("--collection", default=COLLECTION_NAME)
+
+    ask_parser = subparsers.add_parser("ask", help="Trả lời một câu hỏi bằng Qwen local")
     ask_parser.add_argument("question")
     ask_parser.add_argument("--top-k", type=int, default=5)
     ask_parser.add_argument("--collection", default=COLLECTION_NAME)
+    ask_parser.add_argument("--generation-model", default="Qwen/Qwen3-1.7B")
+    ask_parser.add_argument("--max-new-tokens", type=int, default=384)
 
     chat_parser = subparsers.add_parser("chat", help="Hỏi đáp liên tục bằng câu hỏi tự nhiên")
     chat_parser.add_argument("--top-k", type=int, default=5)
     chat_parser.add_argument("--collection", default=COLLECTION_NAME)
+    chat_parser.add_argument("--generation-model", default="Qwen/Qwen3-1.7B")
+    chat_parser.add_argument("--max-new-tokens", type=int, default=384)
 
     args = parser.parse_args()
     if args.command == "ingest":
         _ingest(args.source_root, args.collection)
-    elif args.command == "ask":
+    elif args.command == "search":
         _print_results(args.question, _retrieve(args.question, args.top_k, args.collection))
+    elif args.command == "ask":
+        _answer(
+            args.question,
+            args.top_k,
+            args.collection,
+            args.generation_model,
+            args.max_new_tokens,
+        )
     else:
-        _chat(args.top_k, args.collection)
+        _chat(
+            args.top_k,
+            args.collection,
+            args.generation_model,
+            args.max_new_tokens,
+        )
 
 
 if __name__ == "__main__":

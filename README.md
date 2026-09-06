@@ -52,9 +52,10 @@ export EDU_RAG_CHROMA_PATH="/Users/VoThiXuanHoa/Downloads/rag_test/chroma_db"
 PYTHONPATH=src python -m edu_rag.cli ingest
 ```
 
-Hỏi trực tiếp một câu:
+Hỏi trực tiếp một câu bằng Qwen local:
 
 ```bash
+export EDU_RAG_CHROMA_PATH="/Users/VoThiXuanHoa/Downloads/rag_test/chroma_db"
 PYTHONPATH=src python -m edu_rag.cli ask "Quan hệ tương đương là gì?"
 ```
 
@@ -66,6 +67,22 @@ PYTHONPATH=src python -m edu_rag.cli chat
 
 Người dùng chỉ cần nhập câu hỏi; gõ `exit` để kết thúc.
 
+`ask` và `chat` dùng `Qwen/Qwen3-1.7B` chạy local trên MPS hoặc CPU để sinh
+câu trả lời. Lần đầu chạy, model sẽ được tải về Hugging Face cache trên máy.
+Có thể chọn bản lớn hơn khi máy đủ bộ nhớ:
+
+```bash
+PYTHONPATH=src python -m edu_rag.cli ask \
+  --generation-model Qwen/Qwen3-4B \
+  "Quan hệ tương đương là gì?"
+```
+
+Lệnh `search` chỉ hiển thị bằng chứng, không tải model sinh câu trả lời:
+
+```bash
+PYTHONPATH=src python -m edu_rag.cli search "Quan hệ tương đương là gì?"
+```
+
 ## Dữ liệu sinh tự động
 
 Thư mục `data/index/chroma_db/`, model cache và file tạm không được commit lên
@@ -76,6 +93,7 @@ GitHub. Chúng sẽ được tạo lại bằng lệnh `ingest` trên máy mới
 - [x] Tách project riêng cho môn Cấu trúc rời rạc.
 - [x] Thêm tài liệu Buổi 3.
 - [x] Chọn Docling, Qwen3 Embedding và ChromaDB làm kiến trúc mục tiêu.
-- [ ] Cài môi trường Python 3.10/3.11 và chạy ingest thật.
+- [x] Cài môi trường Python 3.10/3.11 và chạy ingest thật.
 - [ ] Bổ sung video/slide các buổi tiếp theo.
-- [ ] Thêm lớp sinh câu trả lời LLM sau khi retrieval ổn định.
+- [x] Thêm lớp sinh câu trả lời Qwen local và giao diện `ask`/`chat`.
+- [ ] Đánh giá chất lượng câu trả lời trên bộ câu hỏi có đáp án.
